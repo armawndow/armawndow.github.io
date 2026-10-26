@@ -2,7 +2,7 @@
 
 Live site: **https://kawmy.github.io/**
 
-A colorful, responsive engineering portfolio with a project gallery, category filters, accessible case-study dialogs, interactive code explanations, a short professional background, and a downloadable résumé.
+A colorful, responsive engineering portfolio with ten public project and contribution case studies, category filters, accessible dialogs, interactive code explanations, four substantial enterprise-experience case studies, and a downloadable résumé.
 
 ## Stack
 

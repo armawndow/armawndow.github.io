@@ -39,6 +39,165 @@ const projects = {
   }
 };
 
+Object.assign(projects, {
+  "fluxora": {
+    "kind": "Open-source contribution / Fluxora Backend / Tooling",
+    "title": "One toolchain, fewer surprises",
+    "summary": "A consistent pnpm workflow across contributor setup, CI, and container builds.",
+    "problem": "The repository tracked both npm and pnpm lockfiles even though CI already used frozen pnpm installs. Two dependency graphs made it unclear which toolchain and dependency resolution were authoritative.",
+    "approach": "I made pnpm 9.15.9 authoritative, added a dependency-free package-manager guard, removed the conflicting npm lockfile, and aligned setup and Docker workflows around Corepack and frozen installs.",
+    "result": "PR #1343 was merged. Supported workflows now point to one package manager, while wrong versions and foreign lockfiles fail early with remediation. No dependencies were upgraded.",
+    "scope": "My focused contribution to Fluxora-Org/Fluxora-Backend. The walkthrough explains the merged toolchain change.",
+    "source": "https://github.com/Fluxora-Org/Fluxora-Backend/pull/1343",
+    "detail": "https://github.com/Fluxora-Org/Fluxora-Backend/pull/1343/files",
+    "color": "#c3e5d7",
+    "stages": [
+      [
+        "The ambiguity",
+        "npm lockfile + pnpm lockfile\nTwo independently resolved dependency graphs"
+      ],
+      [
+        "The change",
+        "One authoritative pnpm 9.15.9 toolchain\nCorepack + frozen installs in setup, CI, and Docker"
+      ],
+      [
+        "The guard",
+        "Reject unsupported package managers and versions\nReject foreign lockfiles with actionable remediation"
+      ]
+    ]
+  },
+  "vero": {
+    "kind": "Open-source contribution / Vero Core Engine / TypeScript",
+    "title": "A cache that knows its limits",
+    "summary": "Preserving an LRU size bound when a background revalidation writes an entry back into the cache.",
+    "problem": "A stale cache entry could be evicted while its asynchronous refresh was still pending. When that refresh completed, revalidation could reinsert the entry without enforcing maxEntries.",
+    "approach": "I called evictIfNeeded() immediately after a successful background-revalidation write and added a deterministic deferred-promise regression test covering eviction during a pending refresh.",
+    "result": "PR #225 was merged. Revalidation now follows the same cache-size bound as the cache-miss path, preserving existing stale-while-revalidate behavior and error handling.",
+    "scope": "My focused contribution to Vero-protocol/vero-core-engine. The timeline illustrates the race covered by the regression test.",
+    "source": "https://github.com/Vero-protocol/vero-core-engine/pull/225",
+    "detail": "https://github.com/Vero-protocol/vero-core-engine/pull/225/files",
+    "color": "#d4cafa",
+    "stages": [
+      [
+        "Refresh begins",
+        "Entry A is stale.\nA background revalidation starts."
+      ],
+      [
+        "Eviction happens",
+        "Other writes evict A while its refresh is pending.\nThe configured maxEntries bound still applies."
+      ],
+      [
+        "Refresh completes",
+        "Reinsert refreshed A → evictIfNeeded()\nThe LRU bound is enforced after the write."
+      ]
+    ]
+  },
+  "ecotask": {
+    "kind": "Open-source contribution / EcoTask Backend / Workflow reliability",
+    "title": "No proof left stranded",
+    "summary": "An escalation path for inconclusive proof verification when no community validators are available.",
+    "problem": "A proof could remain in VERIFYING indefinitely when automatic verification was inconclusive and the community validator pool was empty.",
+    "approach": "I added a zero-validator escalation that atomically returns the proof to the existing PENDING admin-review state, records an idempotent manual-review marker, and exposes the reason through the review API.",
+    "result": "PR #97 was merged. The path preserves existing admin approval/rejection behavior, avoids duplicate retry effects, and does not overwrite a proof already resolved by a concurrent finalizer.",
+    "scope": "My focused contribution to ecotask-network/EcoTask-backend. State labels in the walkthrough explain the merged escalation path.",
+    "source": "https://github.com/ecotask-network/EcoTask-backend/pull/97",
+    "detail": "https://github.com/ecotask-network/EcoTask-backend/pull/97/files",
+    "color": "#f2d955",
+    "stages": [
+      [
+        "Verification stalls",
+        "Automatic verification is inconclusive.\nNo community validators are available."
+      ],
+      [
+        "Escalation",
+        "Guarded update: status must still be VERIFYING.\nReturn to PENDING + idempotent review marker."
+      ],
+      [
+        "Review path",
+        "GET /api/proofs/review?reviewReason=no_validators\nThe existing admin approve/reject flow handles review."
+      ]
+    ]
+  },
+  "edupay": {
+    "kind": "Open-source contribution / StellarEduPay / Node.js",
+    "title": "Getting the backend moving again",
+    "summary": "A small import fix that restored payment-route parsing and backend startup.",
+    "problem": "paymentRoutes.js declared requireSchoolAuth twice with module-scope const destructuring. Node failed while parsing the route, which prevented the importing backend application from starting.",
+    "approach": "I consolidated payment-route dependencies into one contiguous import block and ensured requireAdminAuth and requireSchoolAuth were each imported once.",
+    "result": "PR #1308 was merged. The duplicate declaration was removed without changing route or middleware behavior. The contribution targets the startup failure rather than unrelated repository failures.",
+    "scope": "My focused contribution to StellarEdu/StellarEduPay. The walkthrough illustrates the original parsing failure and its resolution.",
+    "source": "https://github.com/StellarEdu/StellarEduPay/pull/1308",
+    "detail": "https://github.com/StellarEdu/StellarEduPay/pull/1308/files",
+    "color": "#ff866b",
+    "stages": [
+      [
+        "The failure",
+        "Duplicate const declaration of requireSchoolAuth\nSyntaxError before the payment route could load"
+      ],
+      [
+        "The fix",
+        "One contiguous import block\nImport each authentication dependency exactly once"
+      ],
+      [
+        "The behavior",
+        "Payment route can parse and load.\nExisting routes and middleware behavior stay intact."
+      ]
+    ]
+  },
+  "kraal": {
+    "kind": "Open-source contribution / Stellar Kraal / CI",
+    "title": "A more predictable CI pipeline",
+    "summary": "Immutable GitHub Actions references with readable versions and preserved workflow behavior.",
+    "problem": "Remote action references needed stable, verifiable identities so the workflow did not depend only on mutable version tags.",
+    "approach": "I pinned remote actions in the CI workflow to verified full commit SHAs, retained readable version comments, preserved explicit stable/nightly Rust inputs, and documented the pinning policy.",
+    "result": "PR #157 was merged. The change pinned remote action references while preserving workflow triggers, permissions, matrices, commands, caching behavior, and job structure.",
+    "scope": "My focused contribution to Stellar-kraal/stellar-kraal-contract. The walkthrough explains action-reference pinning, not a new CI platform.",
+    "source": "https://github.com/Stellar-kraal/stellar-kraal-contract/pull/157",
+    "detail": "https://github.com/Stellar-kraal/stellar-kraal-contract/pull/157/files",
+    "color": "#d4cafa",
+    "stages": [
+      [
+        "Identify",
+        "Find each remote action reference in ci.yml.\nResolve the intended upstream version."
+      ],
+      [
+        "Pin",
+        "Use the verified full commit SHA.\nKeep a readable version comment beside the pin."
+      ],
+      [
+        "Preserve",
+        "Keep existing workflow structure and permissions.\nRetain explicit stable and nightly toolchain inputs."
+      ]
+    ]
+  },
+  "stenion": {
+    "kind": "Open-source contribution / Stenion / Public API",
+    "title": "Making coverage visible",
+    "summary": "A separate public API for protocols assessed but not scored on the live leaderboard.",
+    "problem": "Coverage needed to explain assessed-but-not-scored protocols without mixing them into the scored leaderboard or presenting an unsupported safety score.",
+    "approach": "I added GET /api/v1/coverage with reason, verification paths, and asOf metadata. The endpoint keeps entries separate from the live leaderboard and includes CORS, rate limiting, error handling, and a one-hour shared-cache TTL.",
+    "result": "PR #62 was merged. The public API contract was documented and coverage became available independently from the scored-protocol endpoint.",
+    "scope": "My focused contribution to stenion-lab/stenion. The walkthrough describes the API contract rather than displaying live protocol data.",
+    "source": "https://github.com/stenion-lab/stenion/pull/62",
+    "detail": "https://github.com/stenion-lab/stenion/pull/62/files",
+    "color": "#c3e5d7",
+    "stages": [
+      [
+        "Separate",
+        "Coverage: assessed but not scored\nLeaderboard: scored protocols\nNo entry belongs to both."
+      ],
+      [
+        "Explain",
+        "GET /api/v1/coverage\nEach entry includes reason, verify, and asOf."
+      ],
+      [
+        "Serve",
+        "CORS + rate limiting + error handling\nOne-hour shared-cache TTL\nNo safetyScore field or numeric JSON values."
+      ]
+    ]
+  }
+});
+
 const filters = document.querySelector('.filters');
 filters.hidden = false;
 filters.addEventListener('click', event => {
@@ -50,6 +209,7 @@ filters.addEventListener('click', event => {
     item.classList.toggle('active', active);
     item.setAttribute('aria-pressed', String(active));
   });
+  document.querySelector('.more-work-heading').hidden = selected === 'personal';
   let count = 0;
   document.querySelectorAll('.project').forEach(project => {
     project.hidden = selected !== 'all' && project.dataset.kind !== selected;
@@ -63,7 +223,17 @@ const demo = document.querySelector('#case-demo');
 let lastTrigger;
 function setDemo(markup) { demo.innerHTML = markup; }
 function renderDemo(key) {
-  if (key === 'dotnet') {
+  if (projects[key].stages) {
+    setDemo('<p class="demo-label">Explore the contribution</p><div class="demo-controls"><button type="button" data-stage="0" aria-pressed="true">01 / Problem</button><button type="button" data-stage="1" aria-pressed="false">02 / Approach</button><button type="button" data-stage="2" aria-pressed="false">03 / Result</button></div><p class="demo-stage-title" style="margin-top:20px"></p><div class="demo-output" role="status" aria-live="polite"></div>');
+    const update = button => {
+      const stage = projects[key].stages[Number(button.dataset.stage)];
+      demo.querySelectorAll('[data-stage]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
+      demo.querySelector('.demo-stage-title').textContent = stage[0];
+      demo.querySelector('.demo-output').textContent = stage[1];
+    };
+    demo.querySelectorAll('[data-stage]').forEach(button => button.addEventListener('click', () => update(button)));
+    update(demo.querySelector('[data-stage]'));
+  } else if (key === 'dotnet') {
     setDemo('<p class="demo-label">Explore the checked-in pieces</p><div class="demo-controls"><button type="button" data-step="0" aria-pressed="true">01 / Build</button><button type="button" data-step="1" aria-pressed="false">02 / Deploy</button><button type="button" data-step="2" aria-pressed="false">03 / Describe behavior</button></div><div class="demo-output" role="status" aria-live="polite"></div>');
     const steps = ['Dockerfile\n.NET 7 SDK → restore → build → publish\nFinal image: ASP.NET 7 runtime', 'deployment.yaml\n4 replicas · CPU & memory limits\nLoadBalancer service → container port 80', 'Calculator.feature\nGiven the first number is 50\nAnd the second number is 70\nWhen the two numbers are added\nThen the result should be 120'];
     const update = button => { demo.querySelectorAll('[data-step]').forEach(b => b.setAttribute('aria-pressed', String(b === button))); demo.querySelector('.demo-output').textContent = steps[Number(button.dataset.step)]; };
