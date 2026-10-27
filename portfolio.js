@@ -1,6 +1,48 @@
 'use strict';
 // Progressive enhancement. Repository, contact and resume links work without JS.
 const projects = {
+  tenantflow: {
+    kind: 'Featured public sample / C# / ASP.NET Core', title: 'TenantFlow API',
+    summary: 'A C#/.NET 10 API that protects tenant boundaries, handles duplicate requests, and delivers integration events through a transactional outbox.',
+    problem: 'Multi-tenant APIs need their most important boundaries to survive retries and concurrent requests: tenant identity cannot come from a caller-controlled header, duplicate writes need a durable outcome, and stale updates must not silently overwrite newer work.',
+    approach: 'The .NET 10 API derives tenant identity from a server-side API-key fixture, scopes reads and writes by tenant, commits the work item, idempotency receipt, and outbox insert in one transaction, and uses strong numeric ETags for If-Match updates. It includes a compiled Azure Service Bus topic adapter behind IEventPublisher, while local logging stays the default.',
+    result: 'Six integration tests pass across tenant isolation, concurrent replay, mismatch conflicts, stale ETags, CORS, and outbox retry behavior. A live HTTP smoke check verifies create, replay, update, isolation, and local event dispatch.',
+    scope: 'Personal portfolio demonstration under kawmy. The walkthrough describes checked-in source and tests; it does not represent production healthcare, finance, or cloud infrastructure.',
+    source: 'https://github.com/kawmy/tenantflow-dotnet', detail: 'https://github.com/kawmy/tenantflow-dotnet/blob/main/README.md', color: '#c3e5d7',
+    stages: [
+      ['Tenant boundary', 'X-Api-Key resolves tenant identity server-side. A caller-supplied tenant header is not used, and another tenant\'s identifier returns 404.'],
+      ['One durable write', 'Work item + idempotency receipt + outbox message share one database transaction. Same normalized request replays; a changed payload returns 409.'],
+      ['Safe delivery', 'ETags reject stale PUTs with 412 before another event is created. A local publisher is default; the compiled Azure Service Bus adapter remains optional.']
+    ]
+  },
+  deliveryboard: {
+    kind: 'Featured public sample / C# / Blazor web', title: 'DeliveryBoard',
+    summary: 'A C# and Blazor web workbench that makes release readiness explainable, with evidence requirements and protection against stale edits.',
+    problem: 'A nearly complete checklist can still hide a failed or pending critical gate. A browser save also needs to refuse a stale revision rather than silently replace a newer decision.',
+    approach: 'DeliveryBoard keeps release policy in pure C#, renders an interactive Blazor web UI, and persists its illustrative board through a revision-controlled JSON file adapter. The adapter serializes saves, checks the expected revision under the same lock, and atomically replaces a same-directory temporary file.',
+    result: 'Seventeen domain, persistence, and concurrency tests pass. A real browser save recalculates readiness and survives a reload. Tests also cover stale-write races, rejected edits preserving bytes, and corrupt storage.',
+    scope: 'Personal portfolio demonstration under kawmy. Blazor is used here as a server-rendered web application, not as a mobile product or a production release system.',
+    source: 'https://github.com/kawmy/deliveryboard-blazor', detail: 'https://github.com/kawmy/deliveryboard-blazor/blob/main/README.md', color: '#f2d955',
+    stages: [
+      ['Make risk visible', 'Weighted readiness remains explanatory: a failed gate or pending critical gate blocks release even when the score looks high.'],
+      ['Protect the save', 'The browser supplies an expected revision. A stale write is rejected under the same process-local lock that serializes file replacement.'],
+      ['Keep its boundary', 'The durable JSON file and lock are a deliberate local-demo adapter. Multi-instance hosting requires shared transactional storage and authorization.']
+    ]
+  },
+  tenantflowflutter: {
+    kind: 'Featured public sample / Flutter companion', title: 'TenantFlow Flutter',
+    summary: 'A new Flutter companion demonstration for the TenantFlow C# API, with a local demo workspace and an optional connection to a developer-run API.',
+    problem: 'An uncertain network response can tempt a user to create a duplicate task, while an out-of-date screen can overwrite newer work. The client needs to preserve request intent and make conflicts understandable.',
+    approach: 'The app starts in clearly labeled in-memory demo mode and can connect to a local TenantFlow API. It keeps an idempotency key for a retry of the same normalized create, starts a new identity for changed content, and turns HTTP 409 and 412 responses into direct user feedback.',
+    result: 'All ten client and widget tests pass, analysis reports no issues, and the release web build succeeds. Try the live demo to filter synthetic tasks, create work items, and move them through their workflow.',
+    scope: 'Personal portfolio demonstration under kawmy. Demo data is in memory and contains no customer data; API connection is optional and local.',
+    source: 'https://github.com/kawmy/tenantflow-flutter', detail: 'https://kawmy.github.io/demos/tenantflow/', color: '#d4cafa',
+    stages: [
+      ['Start safely', 'Demo workspace: in-memory fixtures, no server connection. The UI makes that status visible before any API connection is attempted.'],
+      ['Preserve intent', 'The same normalized create keeps its idempotency key. Changed content creates a new request identity instead of reusing the old key.'],
+      ['Explain conflicts', 'A 409 points to changed data with an existing request key. A 412 says the item changed elsewhere and asks the user to refresh.']
+    ]
+  },
   dotnet: {
     kind: 'Personal project / .NET deployment sample', title: 'The deployment lab',
     summary: 'A small, public .NET sample that connects application code, a container build, Kubernetes configuration, and SpecFlow scenarios.',
@@ -224,7 +266,7 @@ let lastTrigger;
 function setDemo(markup) { demo.innerHTML = markup; }
 function renderDemo(key) {
   if (projects[key].stages) {
-    setDemo('<p class="demo-label">Explore the contribution</p><div class="demo-controls"><button type="button" data-stage="0" aria-pressed="true">01 / Problem</button><button type="button" data-stage="1" aria-pressed="false">02 / Approach</button><button type="button" data-stage="2" aria-pressed="false">03 / Result</button></div><p class="demo-stage-title" style="margin-top:20px"></p><div class="demo-output" role="status" aria-live="polite"></div>');
+    setDemo('<p class="demo-label">Explore the design</p><div class="demo-controls"><button type="button" data-stage="0" aria-pressed="true">01 / Problem</button><button type="button" data-stage="1" aria-pressed="false">02 / Approach</button><button type="button" data-stage="2" aria-pressed="false">03 / Result</button></div><p class="demo-stage-title" style="margin-top:20px"></p><div class="demo-output" role="status" aria-live="polite"></div>');
     const update = button => {
       const stage = projects[key].stages[Number(button.dataset.stage)];
       demo.querySelectorAll('[data-stage]').forEach(b => b.setAttribute('aria-pressed', String(b === button)));
@@ -267,6 +309,7 @@ document.querySelectorAll('[data-case]').forEach(trigger => trigger.addEventList
   ['kind','title','summary','problem','approach','result','scope'].forEach(field => { document.querySelector(`#case-${field}`).textContent = project[field]; });
   document.querySelector('#case-source').href = project.source;
   document.querySelector('#case-detail').href = project.detail;
+  document.querySelector('#case-detail').textContent = trigger.dataset.case === 'tenantflowflutter' ? 'Try the live demo ↗' : 'See the implementation ↗';
   demo.style.backgroundColor = project.color;
   renderDemo(key);
   document.body.classList.add('dialog-open');
