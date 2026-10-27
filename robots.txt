@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://kawmy.github.io/sitemap.xml
+Sitemap: https://armawndow.github.io/sitemap.xml

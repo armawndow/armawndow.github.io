@@ -7,8 +7,8 @@ const projects = {
     problem: 'Multi-tenant APIs need their most important boundaries to survive retries and concurrent requests: tenant identity cannot come from a caller-controlled header, duplicate writes need a durable outcome, and stale updates must not silently overwrite newer work.',
     approach: 'The .NET 10 API derives tenant identity from a server-side API-key fixture, scopes reads and writes by tenant, commits the work item, idempotency receipt, and outbox insert in one transaction, and uses strong numeric ETags for If-Match updates. It includes a compiled Azure Service Bus topic adapter behind IEventPublisher, while local logging stays the default.',
     result: 'Six integration tests pass across tenant isolation, concurrent replay, mismatch conflicts, stale ETags, CORS, and outbox retry behavior. A live HTTP smoke check verifies create, replay, update, isolation, and local event dispatch.',
-    scope: 'Personal portfolio demonstration under kawmy. The walkthrough describes checked-in source and tests; it does not represent production healthcare, finance, or cloud infrastructure.',
-    source: 'https://github.com/kawmy/tenantflow-dotnet', detail: 'https://github.com/kawmy/tenantflow-dotnet/blob/main/README.md', color: '#c3e5d7',
+    scope: 'Personal portfolio demonstration under armawndow. The walkthrough describes checked-in source and tests; it does not represent production healthcare, finance, or cloud infrastructure.',
+    source: 'https://github.com/armawndow/tenantflow-dotnet', detail: 'https://github.com/armawndow/tenantflow-dotnet/blob/main/README.md', color: '#c3e5d7',
     stages: [
       ['Tenant boundary', 'X-Api-Key resolves tenant identity server-side. A caller-supplied tenant header is not used, and another tenant\'s identifier returns 404.'],
       ['One durable write', 'Work item + idempotency receipt + outbox message share one database transaction. Same normalized request replays; a changed payload returns 409.'],
@@ -21,8 +21,8 @@ const projects = {
     problem: 'A nearly complete checklist can still hide a failed or pending critical gate. A browser save also needs to refuse a stale revision rather than silently replace a newer decision.',
     approach: 'DeliveryBoard keeps release policy in pure C#, renders an interactive Blazor web UI, and persists its illustrative board through a revision-controlled JSON file adapter. The adapter serializes saves, checks the expected revision under the same lock, and atomically replaces a same-directory temporary file.',
     result: 'Seventeen domain, persistence, and concurrency tests pass. A real browser save recalculates readiness and survives a reload. Tests also cover stale-write races, rejected edits preserving bytes, and corrupt storage.',
-    scope: 'Personal portfolio demonstration under kawmy. Blazor is used here as a server-rendered web application, not as a mobile product or a production release system.',
-    source: 'https://github.com/kawmy/deliveryboard-blazor', detail: 'https://github.com/kawmy/deliveryboard-blazor/blob/main/README.md', color: '#f2d955',
+    scope: 'Personal portfolio demonstration under armawndow. Blazor is used here as a server-rendered web application, not as a mobile product or a production release system.',
+    source: 'https://github.com/armawndow/deliveryboard-blazor', detail: 'https://github.com/armawndow/deliveryboard-blazor/blob/main/README.md', color: '#f2d955',
     stages: [
       ['Make risk visible', 'Weighted readiness remains explanatory: a failed gate or pending critical gate blocks release even when the score looks high.'],
       ['Protect the save', 'The browser supplies an expected revision. A stale write is rejected under the same process-local lock that serializes file replacement.'],
@@ -35,8 +35,8 @@ const projects = {
     problem: 'An uncertain network response can tempt a user to create a duplicate task, while an out-of-date screen can overwrite newer work. The client needs to preserve request intent and make conflicts understandable.',
     approach: 'The app starts in clearly labeled in-memory demo mode and can connect to a local TenantFlow API. It keeps an idempotency key for a retry of the same normalized create, starts a new identity for changed content, and turns HTTP 409 and 412 responses into direct user feedback.',
     result: 'All ten client and widget tests pass, analysis reports no issues, and the release web build succeeds. Try the live demo to filter synthetic tasks, create work items, and move them through their workflow.',
-    scope: 'Personal portfolio demonstration under kawmy. Demo data is in memory and contains no customer data; API connection is optional and local.',
-    source: 'https://github.com/kawmy/tenantflow-flutter', detail: 'https://kawmy.github.io/demos/tenantflow/', color: '#d4cafa',
+    scope: 'Personal portfolio demonstration under armawndow. Demo data is in memory and contains no customer data; API connection is optional and local.',
+    source: 'https://github.com/armawndow/tenantflow-flutter', detail: 'https://armawndow.github.io/demos/tenantflow/', color: '#d4cafa',
     stages: [
       ['Start safely', 'Demo workspace: in-memory fixtures, no server connection. The UI makes that status visible before any API connection is attempted.'],
       ['Preserve intent', 'The same normalized create keeps its idempotency key. Changed content creates a new request identity instead of reusing the old key.'],
@@ -49,8 +49,8 @@ const projects = {
     problem: 'A deployment is more than application code. The build, runtime image, deployment configuration, and tests each describe a different part of how a service is expected to run.',
     approach: 'The repository brings an ASP.NET application together with a multi-stage .NET 7 Dockerfile, a Kubernetes deployment and load-balancer service, and a separate SpecFlow test project. The deployment configuration declares four replicas and explicit CPU and memory requests and limits.',
     result: 'A concrete learning sample with source files you can inspect side by side: build and publish stages, deployment YAML, and readable behavior scenarios. It is presented here as a sample repository, with no claim of a current production deployment.',
-    scope: 'Personal learning project under kawmy. The interactive walkthrough illustrates the checked-in build, deployment, and test files.',
-    source: 'https://github.com/kawmy/.NETDockerK8sSpecFlow', detail: 'https://github.com/kawmy/.NETDockerK8sSpecFlow/blob/main/kubernetesTest/deployment.yaml', color: '#d4cafa'
+    scope: 'Personal learning project under armawndow. The interactive walkthrough illustrates the checked-in build, deployment, and test files.',
+    source: 'https://github.com/armawndow/.NETDockerK8sSpecFlow', detail: 'https://github.com/armawndow/.NETDockerK8sSpecFlow/blob/main/kubernetesTest/deployment.yaml', color: '#d4cafa'
   },
   docker: {
     kind: 'Open-source contribution / Docker CLI / Go', title: 'Keeping Docker in order',
@@ -76,8 +76,8 @@ const projects = {
     problem: 'When reviewing or moving work between branches, a list of commits alone may not provide the file-level context you need. Finding the changed files, their diffs, and the current versions can become a repetitive task.',
     approach: 'The guide starts with git log filtered by author, deduplicates the file list, and collects per-file diffs and current copies. It includes PowerShell, Windows CMD, and Bash examples.',
     result: 'A public, reusable reference for author-focused Git investigation. The workflow helps make the review material easier to inspect. It is a guide, not an automated migration tool or a claim that all branch differences belong to one author.',
-    scope: 'Personal guide under kawmy, with PowerShell, CMD, and Bash examples. The interactive walkthrough uses fictional commits to explain author filtering.',
-    source: 'https://github.com/kawmy/Guide-Tracking-Changes-by-an-Author-in-a-Git-Branch', detail: 'https://github.com/kawmy/Guide-Tracking-Changes-by-an-Author-in-a-Git-Branch/blob/main/README.md', color: '#c3e5d7'
+    scope: 'Personal guide under armawndow, with PowerShell, CMD, and Bash examples. The interactive walkthrough uses fictional commits to explain author filtering.',
+    source: 'https://github.com/armawndow/Guide-Tracking-Changes-by-an-Author-in-a-Git-Branch', detail: 'https://github.com/armawndow/Guide-Tracking-Changes-by-an-Author-in-a-Git-Branch/blob/main/README.md', color: '#c3e5d7'
   }
 };
 

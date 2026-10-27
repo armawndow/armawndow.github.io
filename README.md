@@ -1,12 +1,12 @@
 # Armando Francisco Denardi — Portfolio
 
-Live site: **https://kawmy.github.io/**
+Live site: **https://armawndow.github.io/**
 
 A colorful, responsive engineering portfolio with thirteen project and contribution case studies, category filters, accessible dialogs, interactive code explanations, four substantial enterprise-experience case studies, and a downloadable résumé aligned with the supplied October 27 résumé.
 
 ## Stack
 
-The portfolio shell uses plain HTML, CSS, and JavaScript with no package installation or build step. The prebuilt Flutter demonstration is under `demos/tenantflow/`; its source and Flutter build instructions are in [tenantflow-flutter](https://github.com/kawmy/tenantflow-flutter). GitHub Pages serves `main` from the repository root. `.nojekyll` preserves Flutter's underscore-prefixed runtime assets. Hosting uses the free included address.
+The portfolio shell uses plain HTML, CSS, and JavaScript with no package installation or build step. The prebuilt Flutter demonstration is under `demos/tenantflow/`; its source and Flutter build instructions are in [tenantflow-flutter](https://github.com/armawndow/tenantflow-flutter). GitHub Pages serves `main` from the repository root. `.nojekyll` preserves Flutter's underscore-prefixed runtime assets. Hosting uses the free included address.
 
 ## Files
 
